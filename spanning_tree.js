@@ -74,4 +74,4 @@ function createSpanningTree(task_graph, choose_construction_option=chooseRandomC
     return root;
 }
 
-export {SpanningTreeNode, createSpanningTree};
+export {SpanningTreeNode, createSpanningTree, chooseRandomConstructionOption};

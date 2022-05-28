@@ -1,5 +1,7 @@
 'use strict';
 
+import {SpanningTreeNode, chooseRandomConstructionOption} from spanning_tree
+
 class BracketTreeSymbol {}
 
 class BracketTreeNode extends BracketTreeSymbol{
@@ -140,3 +142,18 @@ function crossOver(tree1, tree2){
         "tree2": tree2_bracket.toSpanningTree()
     }
 }
+
+function mutation(tree, probablity){
+
+    if(Math.random()<=probablity){
+        tree_bracket = new SpanningTreeBracketNotation(tree);
+        let x = Math.floor(Math.random() * tree_bracket.nodesNumber);
+        let x1 = tree_bracket.findIndexOfNthNode(x);
+        tree_bracket.symbolsList[x1].construction_option = chooseRandomConstructionOption();
+        return tree_bracket.toSpanningTree();   
+    }
+    return tree;
+}
+
+
+export {crossOver, mutation};
