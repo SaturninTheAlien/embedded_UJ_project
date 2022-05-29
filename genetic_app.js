@@ -1,5 +1,6 @@
 'use strict';
 
+import { createSpanningTree } from "./spanning_tree.js";
 import { calculateCost, calculateTime } from "./cost_and_time.js";
 import { createEmbeddedSystemFromSpanningTree } from "./spanning_tree_to_system.js";
 import { crossOver, mutation, cloneTree } from "./genetic.js";
@@ -44,6 +45,7 @@ class GeneticApp{
     constructor(root_div,
     task_graph,
     score_func,
+    start_n = 2,
     max_n = 15,
     number_by_crossing = 10,
     number_by_mutation = 2,
@@ -54,12 +56,31 @@ class GeneticApp{
 
         this.root_div = root_div;
         this.task_graph = task_graph;
-        this.score_func = score_func;
+        this.calculateScoreFunc = score_func;
 
         this.max_n = max_n;        
         this.number_by_crossing = number_by_crossing;
         this.number_by_mutation = number_by_mutation;
         this.number_by_cloning = number_by_cloning;
+
+        for(let i=0;i<start_n;++i){
+            this.individuals.push(new Individual(
+                task_graph,
+                createSpanningTree(task_graph),
+                1,
+                score_func));
+        }
+
+        this.best_individual = this.individuals[0];
+        this.updateBestIndividual();
+    }
+
+    updateBestIndividual(){
+        for(let ind of this.individuals){
+            if(ind.score < this.best_individual.score){
+                this.best_individual = ind;
+            }
+        }
     }
 
     randomIndex(){
@@ -75,10 +96,12 @@ class GeneticApp{
 
         let score_sum = this.individuals.map(a => a.score).reduce((a,b)=> a+b);
 
+        let _this = this;
         function getIndexToRemove(){
+            
             let x = Math.random() * score_sum;
-            for(let i=0;i<this.individuals.length;++i){
-                x -= this.individuals[i].score;
+            for(let i=0;i<_this.individuals.length;++i){
+                x -= _this.individuals[i].score;
                 if(x<=0)return i;
             }
 
@@ -98,8 +121,18 @@ class GeneticApp{
 
     render(){
         this.root_div.innerHTML = `
-        <p>Individuals: ${this.individuals.length}/${this.max_n}</p>
-        <table name="individuals_table" class="table_view">
+        <p>Individuals: ${this.individuals.length}/${this.max_n}
+        <button type="button" name="next_generation">Next generation</button></p>
+
+        <p>The best individual: <br/>
+        
+        Tree: ${this.best_individual.tree.constructionOptionsBracketNotation()} <br/>
+        Cost: ${this.best_individual.cost.total_cost} <br/>
+        Time: ${this.best_individual.time.total_time} <br/>
+        Score:${this.best_individual.score} </p>
+
+        <p> All individuals: </p>
+        <table name="individuals_table" class="t1">
             <tr>
                 <th> </th>
                 <th>Tree  </th>
@@ -108,7 +141,40 @@ class GeneticApp{
                 <th>Score </th>
             </tr>
         </table>
-        `;        
+        `;
+
+        let individuals_table = this.root_div.querySelector("table[name='individuals_table']");
+        let next_generation_btn = this.root_div.querySelector("button[name='next_generation']");
+        
+        let _this = this;
+        next_generation_btn.onclick = function(){
+            _this.nextGeneration();
+            _this.render();
+        }
+
+        let counter = 1;
+
+        for(let ind of this.individuals){
+            let row = individuals_table.insertRow(-1);
+
+            row.classList.add(`orig-${ind.origin}`);
+            
+            let cell = row.insertCell(0);
+            cell.innerText = counter.toString();
+            ++counter;
+
+            cell = row.insertCell(1);
+            cell.innerText = ind.tree.constructionOptionsBracketNotation();
+
+            cell = row.insertCell(2);
+            cell.innerText = ind.cost.total_cost;
+
+            cell = row.insertCell(3);
+            cell.innerText = ind.time.total_time;
+
+            cell = row.insertCell(4);
+            cell.innerText = ind.score;
+        }
     }
 
     createByCrossingOver(parent1, parent2){
@@ -124,7 +190,7 @@ class GeneticApp{
         return new Individual(this.task_graph, cloneTree(parent.tree), 4, this.calculateScoreFunc);
     }
 
-    newGeneration(){
+    nextGeneration(){
 
         for(let i=0;i<this.number_by_crossing;++i){
             let index1 = this.randomIndex();
@@ -149,6 +215,9 @@ class GeneticApp{
         while(this.individuals.length > this.max_n){
             this.removeTheWorstRoulette();
         }
+
+        this.updateBestIndividual();
+        
     }
 }
 
