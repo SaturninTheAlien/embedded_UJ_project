@@ -155,5 +155,20 @@ function mutation(tree, probablity){
     return tree;
 }
 
+function cloneTree(tree){
 
-export {crossOver, mutation};
+    function cloneNodeRecursive(old_node){
+        let new_node = new SpanningTreeNode(old_node.task_index, old_node.construction_option);
+
+        for(let child_node of old_node.children){
+            new_node.children.push( cloneNodeRecursive(child_node) );
+        }
+
+        return new_node;
+    }
+
+    return cloneNodeRecursive(tree);
+}
+
+
+export {crossOver, mutation, cloneTree};

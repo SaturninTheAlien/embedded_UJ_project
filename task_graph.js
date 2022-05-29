@@ -356,4 +356,4 @@ function readTaskGraph(source){
     return result;
 }
 
-export {readTaskGraph as default, taskGraphToString};
+export {readTaskGraph, taskGraphToString};
