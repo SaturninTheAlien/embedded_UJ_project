@@ -3,52 +3,65 @@
  */
 
 'use strict';
-function taskGraphToString(task_graph){
-    let result = `@tasks ${task_graph.tasks.length}\n`;
-    for(let task of task_graph.tasks){
-        result+=task.name+" "+task.successors.length;
-        for(let successor of task.successors){
-            if(successor.hasOwnProperty("condition") && successor.condition!=null){
-                result+=` C${successor.id}(${successor.data})[${successor.condition}]`;
-            }
-            else{
-                result+=` ${successor.id}(${successor.data})`;
-            }
-        }
-        result+="\n";
-    }
-    result+= `@proc ${task_graph.processors.length}\n`;
-    for(let proc of task_graph.processors){
-        result+= `${proc.cost} ${proc.data} ${proc.hardware_core ? 0 : 1}\n`;
-    }
-    result+= "@times\n";
-    for(let task of task_graph.tasks){
-        for(let t of task.times_per_processor){
-            result += `${t} `;
-        }
-        result += "\n";
+
+class TaskGraph{
+    constructor(tasks, processors, channels){
+        this.tasks = tasks;
+        this.processors = processors;
+        this.channels = channels;
     }
 
-    result+= "@cost\n";
-    for(let task of task_graph.tasks){
-        for(let cost of task.costs_per_processor){
-            result += `${cost} `;
+    toString(){
+        let result = `@tasks ${this.tasks.length}\n`;
+        for(let task of this.tasks){
+            result+=task.name+" "+task.successors.length;
+            for(let successor of task.successors){
+                if(successor.hasOwnProperty("condition") && successor.condition!=null){
+                    result+=` C${successor.id}(${successor.data})[${successor.condition}]`;
+                }
+                else{
+                    result+=` ${successor.id}(${successor.data})`;
+                }
+            }
+            result+="\n";
         }
-        result+="\n";
-    }
+        result+= `@proc ${this.processors.length}\n`;
+        for(let proc of this.processors){
+            result+= `${proc.cost} ${proc.data} ${proc.hardware_core ? 0 : 1}\n`;
+        }
+        result+= "@times\n";
+        for(let task of this.tasks){
+            for(let t of task.times_per_processor){
+                result += `${t} `;
+            }
+            result += "\n";
+        }
 
-    result+=`@comm ${task_graph.channels.length}\n`;
-    for(let channel of task_graph.channels){
-        result+=`${channel.name} ${channel.cost} ${channel.data}`;
-        for(let b of channel.suitable_for_processors){
-            result+=` ${b?1:0}`;
+        result+= "@cost\n";
+        for(let task of this.tasks){
+            for(let cost of task.costs_per_processor){
+                result += `${cost} `;
+            }
+            result+="\n";
         }
-        result+="\n";
+
+        result+=`@comm ${this.channels.length}\n`;
+        for(let channel of this.channels){
+            result+=`${channel.name} ${channel.cost} ${channel.data}`;
+            for(let b of channel.suitable_for_processors){
+                result+=` ${b?1:0}`;
+            }
+            result+="\n";
+        }
+        return result;
     }
-    return result;
 }
 
 function readTaskGraph(source){
+    if(source instanceof TaskGraph){
+        return source;
+    }
+
     let task_number=0;
     let successors_number=0;
 
@@ -342,18 +355,7 @@ function readTaskGraph(source){
             }
         }
     }
-
-    let result = {
-        "tasks": tasks,
-        "processors": processors,
-        "channels": channels
-    }
-
-    result.toString = function(){
-        return taskGraphToString(this);
-    }
-
-    return result;
+    return new TaskGraph(tasks, processors, channels);
 }
 
-export {readTaskGraph, taskGraphToString};
+export {TaskGraph, readTaskGraph};

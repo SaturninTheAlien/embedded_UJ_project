@@ -1,11 +1,12 @@
 'use strict';
 
-import {SpanningTreeNode, chooseRandomConstructionOption} from spanning_tree
+import {SpanningTreeNode, chooseRandomConstructionOption} from "./spanning_tree.js";
 
 class BracketTreeSymbol {}
 
 class BracketTreeNode extends BracketTreeSymbol{
     constructor(task_index, construction_option){
+        super();
         this.task_index = task_index;
         this.construction_option = construction_option;
     }
@@ -101,6 +102,8 @@ class SpanningTreeBracketNotation{
         if(this.symbolsList.length > 1 && Object.is(this.symbolsList[1], BRACKET_OPEN)){
             this._addChildren(root, 1);
         }
+
+        return root;
     }
 
     toString(){
@@ -119,8 +122,8 @@ function crossOver(tree1, tree2){
     }
     
     /** Convert normal spanning tree to bracket notation */
-    tree1_bracket = new SpanningTreeBracketNotation(tree1);
-    tree2_bracket = new SpanningTreeBracketNotation(tree2);
+    let tree1_bracket = new SpanningTreeBracketNotation(tree1);
+    let tree2_bracket = new SpanningTreeBracketNotation(tree2);
 
     if(tree1_bracket.nodesNumber!=tree2_bracket.nodesNumber){
         throw "Nodes numbers in tree1 and tree2 are not equal.";
@@ -146,7 +149,7 @@ function crossOver(tree1, tree2){
 function mutation(tree, probablity){
 
     if(Math.random()<=probablity){
-        tree_bracket = new SpanningTreeBracketNotation(tree);
+        let tree_bracket = new SpanningTreeBracketNotation(tree);
         let x = Math.floor(Math.random() * tree_bracket.nodesNumber);
         let x1 = tree_bracket.findIndexOfNthNode(x);
         tree_bracket.symbolsList[x1].construction_option = chooseRandomConstructionOption();

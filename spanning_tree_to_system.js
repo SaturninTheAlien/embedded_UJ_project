@@ -245,4 +245,4 @@ function createEmbeddedSystemFromSpanningTree(task_graph, spanning_tree){
     return embedded_system;
 }
 
-export {createEmbeddedSystemFromSpanningTree as default};
+export {createEmbeddedSystemFromSpanningTree};
