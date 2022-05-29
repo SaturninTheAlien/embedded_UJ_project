@@ -44,6 +44,11 @@ function chooseRandomConstructionOption(task){
     return Math.floor(Math.random() * 9) + 1;
 }
 
+function chooseRandomConstructionOptionOtherThan(option_index){
+    let res = Math.floor(Math.random() * 8) + 1;
+    return res < option_index ? res : res + 1;
+}
+
 function createSpanningTree(task_graph, choose_construction_option=chooseRandomConstructionOption){
     if(task_graph.tasks.length==0)return null;
 
@@ -77,4 +82,8 @@ function createSpanningTree(task_graph, choose_construction_option=chooseRandomC
 
 
 
-export {SpanningTreeNode, createSpanningTree, chooseRandomConstructionOption};
+export {SpanningTreeNode,
+    createSpanningTree,
+    chooseRandomConstructionOption,
+    chooseRandomConstructionOptionOtherThan
+};

@@ -33,7 +33,7 @@ function mutation_test(task_graph_in){
     let task_graph = readTaskGraph(task_graph_in);
 
     let before_mutation = createSpanningTree(task_graph);
-    let after_mutation = mutation(before_mutation, 1.0);
+    let after_mutation = mutation(before_mutation);
 
     let inner_html = `<h2>Before mutation: </h2>`;
     inner_html += renderSystemDescriptionFromTree(task_graph, before_mutation);

@@ -1,6 +1,6 @@
 'use strict';
 
-import {SpanningTreeNode, chooseRandomConstructionOption} from "./spanning_tree.js";
+import {SpanningTreeNode, chooseRandomConstructionOptionOtherThan} from "./spanning_tree.js";
 
 class BracketTreeSymbol {}
 
@@ -146,16 +146,15 @@ function crossOver(tree1, tree2){
     }
 }
 
-function mutation(tree, probablity){
+function mutation(tree){
+    let tree_bracket = new SpanningTreeBracketNotation(tree);
+    let x = Math.floor(Math.random() * tree_bracket.nodesNumber);
+    let x1 = tree_bracket.findIndexOfNthNode(x);
 
-    if(Math.random()<=probablity){
-        let tree_bracket = new SpanningTreeBracketNotation(tree);
-        let x = Math.floor(Math.random() * tree_bracket.nodesNumber);
-        let x1 = tree_bracket.findIndexOfNthNode(x);
-        tree_bracket.symbolsList[x1].construction_option = chooseRandomConstructionOption();
-        return tree_bracket.toSpanningTree();   
-    }
-    return tree;
+    tree_bracket.symbolsList[x1].construction_option = chooseRandomConstructionOptionOtherThan(
+        tree_bracket.symbolsList[x1].construction_option
+    );
+    return tree_bracket.toSpanningTree();
 }
 
 function cloneTree(tree){
