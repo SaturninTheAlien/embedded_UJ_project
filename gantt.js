@@ -14,9 +14,10 @@ function value_to_year(value) {
 }
 
 function drawGanttChart(container, time_results) {
-
     
-    console.log(container);
+
+    let normalization_required = time_results.total_time > 2500;
+
     let chart = new google.visualization.Timeline(container);
     let dataTable = new google.visualization.DataTable();
 
@@ -29,15 +30,20 @@ function drawGanttChart(container, time_results) {
     let rows = [];
     for(let a of time_results.detailed_results){
 
-        let start_time_normalized = 100*a.start_time / time_results.total_time;
-        let end_time_normalized = 100*a.end_time / time_results.total_time;
+        let start_time = a.start_time;
+        let end_time = a.end_time;
+
+        if(normalization_required){
+            start_time = 100*start_time/time_results.total_time;
+            end_time = 100*end_time/time_results.total_time;
+        }
 
         let row = [
             a.proc_name,
             a.task_name,
             `Time: ${a.end_time - a.start_time}`,
-            value_to_year(start_time_normalized),
-            value_to_year(end_time_normalized)
+            value_to_year(start_time),
+            value_to_year(end_time)
         ];
         rows.push(row);
     }
@@ -50,9 +56,14 @@ function drawGanttChart(container, time_results) {
     chart.draw(dataTable, options);
 
     for (let horizontalLabel of container.querySelectorAll('svg > g:nth-child(3) > text')) {
+        
+        let new_label_value = parseInt(horizontalLabel.textContent) - horizontal_label_value_helper;
+        
+        if(normalization_required){
+            new_label_value = Math.round(new_label_value*time_results.total_time/100);
+        }
 
-        horizontalLabel.textContent = Math.round(time_results.total_time*
-        (parseInt(horizontalLabel.innerHTML) - horizontal_label_value_helper)/100);
+        horizontalLabel.textContent = new_label_value.toString();
     }
 }
 
