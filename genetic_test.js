@@ -1,11 +1,13 @@
 'use strict';
 
-import { readTaskGraph} from "./task_graph.js";
 
+import { drawGanttChart } from "./gantt.js";
+import { calculateTime } from "./cost_and_time.js";
+
+import { readTaskGraph} from "./task_graph.js";
 import { createSpanningTree } from "./spanning_tree.js";
 import { createEmbeddedSystemFromSpanningTree } from "./spanning_tree_to_system.js";
 import { renderSystemDescription, renderSystemStatistics } from "./render.js";
-
 import { crossOver, mutation, cloneTree } from "./genetic.js";
 
 
@@ -76,7 +78,15 @@ function crossover_test(task_graph_in){
     inner_html += renderSystemDescriptionFromTree(task_graph , crossing_results.tree2, "Tree 2");
 
     return inner_html;
-
 }
 
-export {crossover_test, mutation_test, clone_test};
+function gantt_test(task_graph_in, container){
+    let task_graph = readTaskGraph(task_graph_in);
+
+    let tree = createSpanningTree(task_graph);
+    let system = createEmbeddedSystemFromSpanningTree(task_graph, tree);
+    let time_results = calculateTime(system, task_graph);
+    drawGanttChart(container, time_results)
+}
+
+export {crossover_test, mutation_test, clone_test, gantt_test};

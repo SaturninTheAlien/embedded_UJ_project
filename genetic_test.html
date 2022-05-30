@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Genetic test</title>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
     <h1>Genetic test.</h1>
@@ -13,6 +15,7 @@
             <option value="0">CrossOver test.</option>
             <option value="1">Mutation test.</option>
             <option value="2">Cloning test.</option>
+            <option value="3">Gantt test.</option>
         </select>
         <br/>
         <br/>
@@ -101,7 +104,7 @@ CHAN0 59 10 1 1 1 1
     <script type="module">
         console.log("Hello world");
 
-        import { crossover_test, mutation_test, clone_test } from "./genetic_test.js";
+        import { crossover_test, mutation_test, clone_test, gantt_test } from "./genetic_test.js";
        
         let tg_form = document.getElementById("tg_form");
         let results_div = document.getElementById("results_div");
@@ -112,20 +115,23 @@ CHAN0 59 10 1 1 1 1
             let selected_test = Number.parseInt(fd.get("selected_test"));
             let tg_source = fd.get("tg_source");
 
-            let inner_html = "";
             switch(selected_test){
             case 0:
-                inner_html = crossover_test(tg_source);
+                results_div.innerHTML = crossover_test(tg_source);
                 break;
             case 1:
-                inner_html = mutation_test(tg_source);
+                results_div.innerHTML = mutation_test(tg_source);
                 break;
             case 2:
-                inner_html = clone_test(tg_source);
+                results_div.innerHTML = clone_test(tg_source);
+                break;
+            case 3:
+                gantt_test(tg_source, results_div);
+                break;
+            default:
+                results_div.innerHTML = "";
                 break;
             }
-
-            results_div.innerHTML = inner_html;//genetic_test(tg_source);
         }
     </script>
 
