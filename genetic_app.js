@@ -55,6 +55,15 @@ class GeneticApp{
         this.individuals = [];
 
         this.root_div = root_div;
+
+        this.genetic_div = document.createElement("div");
+        this.root_div.appendChild(this.genetic_div);
+
+        this.system_description_div = document.createElement("div");
+        this.system_description_div.style.display = "none";
+        this.root_div.appendChild(this.system_description_div);
+
+
         this.task_graph = task_graph;
         this.calculateScoreFunc = score_func;
 
@@ -120,31 +129,29 @@ class GeneticApp{
     }
 
     render(){
-        this.root_div.innerHTML = `
+        const table_header = `
+        <tr>
+            <th>Nr</th>
+            <th>Tree</th>
+            <th>Cost</th>
+            <th>Time</th>
+            <th>Score</th>
+            <th></th>
+        </tr>
+        `;
+
+        this.genetic_div.innerHTML = `
         <p>Individuals: ${this.individuals.length}/${this.max_n}
         <button type="button" name="next_generation">Next generation</button></p>
 
-        <p>The best individual: <br/>
-        
-        Tree: ${this.best_individual.tree.constructionOptionsBracketNotation()} <br/>
-        Cost: ${this.best_individual.cost.total_cost} <br/>
-        Time: ${this.best_individual.time.total_time} <br/>
-        Score:${this.best_individual.score} </p>
+        <p>The best individual:<p>
+        <table name="best_individual" class="t1">${table_header}</table>
 
-        <p> All individuals: </p>
-        <table name="individuals_table" class="t1">
-            <tr>
-                <th> </th>
-                <th>Tree  </th>
-                <th>Cost  </th>
-                <th>Time  </th>
-                <th>Score </th>
-            </tr>
-        </table>
+        <p>All individuals:</p>
+        <table name="all_individuals" class="t1">${table_header}</table>
         `;
 
-        let individuals_table = this.root_div.querySelector("table[name='individuals_table']");
-        let next_generation_btn = this.root_div.querySelector("button[name='next_generation']");
+        let next_generation_btn = this.genetic_div.querySelector("button[name='next_generation']");
         
         let _this = this;
         next_generation_btn.onclick = function(){
@@ -152,29 +159,47 @@ class GeneticApp{
             _this.render();
         }
 
+        let best_individual_table = this.genetic_div.querySelector("table[name='best_individual']");
+        this.renderIndividual(best_individual_table, this.best_individual, 1);
+
+        let individuals_table = this.genetic_div.querySelector("table[name='all_individuals']");
         let counter = 1;
-
         for(let ind of this.individuals){
-            let row = individuals_table.insertRow(-1);
-
-            row.classList.add(`orig-${ind.origin}`);
-            
-            let cell = row.insertCell(0);
-            cell.innerText = counter.toString();
+            this.renderIndividual(individuals_table, ind, counter);
             ++counter;
-
-            cell = row.insertCell(1);
-            cell.innerText = ind.tree.constructionOptionsBracketNotation();
-
-            cell = row.insertCell(2);
-            cell.innerText = ind.cost.total_cost;
-
-            cell = row.insertCell(3);
-            cell.innerText = ind.time.total_time;
-
-            cell = row.insertCell(4);
-            cell.innerText = ind.score;
         }
+    }
+
+    renderIndividual(table, ind, counter){
+        let row = table.insertRow(-1);
+        row.classList.add(`orig-${ind.origin}`);
+        
+        let cell = row.insertCell(0);
+        cell.innerText = counter.toString();
+        ++counter;
+
+        cell = row.insertCell(1);
+        cell.innerText = ind.tree.constructionOptionsBracketNotation();
+
+        cell = row.insertCell(2);
+        cell.innerText = ind.cost.total_cost;
+
+        cell = row.insertCell(3);
+        cell.innerText = ind.time.total_time;
+
+        cell = row.insertCell(4);
+        cell.innerText = ind.score;
+
+        cell = row.insertCell(5);
+        let btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerText = "Show system";
+
+        let _this = this;
+        btn.onclick = function(){
+            _this.renderIndividualDescription(ind);
+        }
+        cell.appendChild(btn);
     }
 
     createByCrossingOver(parent1, parent2){
@@ -218,6 +243,10 @@ class GeneticApp{
 
         this.updateBestIndividual();
         
+    }
+
+    renderIndividualDescription(individual){
+        console.log(individual);
     }
 }
 

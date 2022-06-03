@@ -115,7 +115,7 @@ table.t1 th, table.t1 td{
         <br/>
         <textarea id="tg_form_tg_source_ta" name="tg_source" style="width: 500px; height: 300px;" required>
 @tasks 20
-T0 5 1(0) 2(0) 3(0) 4(0) 5(0) 
+T0 5 1(0) 2(0) 3(0) 4(0) 5(0)   #This is a comment.
 T1 0 
 T2 5 6(0) 7(0) 8(0) 9(0) 12(0) 
 T3 1 9(0) 
@@ -189,7 +189,7 @@ CHAN0 59 10 1 1 1 1
         <button type="submit">Start genetic</button>
     </form>
 
-    <div id="root_div" style="display: none;"></div>
+    <div id="genetic_app_root" style="display: none;"> </div>
 
     <script type="module">
         console.log("Hello world");
@@ -198,7 +198,7 @@ CHAN0 59 10 1 1 1 1
         import {GeneticApp} from "./genetic_app.js";
 
         let tg_form = document.getElementById("tg_form");
-        let root_div = document.getElementById("root_div");
+        let genetic_app_root = document.getElementById("genetic_app_root");
 
         tg_form.onsubmit = function(event){
             event.preventDefault();
@@ -242,13 +242,13 @@ CHAN0 59 10 1 1 1 1
                 break;
             }
 
-            let app = new GeneticApp(root_div, task_graph, score_func,start_n, max_n,
+            let app = new GeneticApp(genetic_app_root, task_graph, score_func,start_n, max_n,
             number_by_crossing, number_by_mutation, number_by_cloning);
 
             app.render();
 
             tg_form.style.display = "none";
-            root_div.style.display = null;
+            genetic_app_root.style.display = null;
         }
 
     </script>
