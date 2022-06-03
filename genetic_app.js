@@ -59,15 +59,9 @@ class GeneticApp{
 
         this.root_div = root_div;
 
-        /*this.genetic_div = document.createElement("div");
-        this.root_div.appendChild(this.genetic_div);
-
-        this.system_description_div = document.createElement("div");
-        this.system_description_div.style.display = "none";
-        this.root_div.appendChild(this.system_description_div);*/
-
         this.genetic_div = this.root_div.querySelector("div[name='genetic']");
         this.system_description_div = this.root_div.querySelector("div[name='system_description']");
+        this.gantt_div = this.root_div.querySelector("div[name='gantt']");
 
         this.task_graph = task_graph;
         this.calculateScoreFunc = score_func;
@@ -302,11 +296,7 @@ class GeneticApp{
         </p>        
         `;
 
-        let gantt_div = document.createElement("div");
-        this.system_description_div.appendChild(gantt_div);
-        drawGanttChart(gantt_div, ind.time);
-
-        console.log(ind);
+        drawGanttChart(this.gantt_div, ind.time);
     }
 }
 

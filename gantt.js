@@ -16,8 +16,9 @@ function value_to_year(value) {
 function drawGanttChart(container, time_results) {
     
 
-    let normalization_required = time_results.total_time > 2500;
+    //let normalization_required = time_results.total_time > 500;
 
+    let normalization_required = true;
     let chart = new google.visualization.Timeline(container);
     let dataTable = new google.visualization.DataTable();
 
@@ -34,8 +35,8 @@ function drawGanttChart(container, time_results) {
         let end_time = a.end_time;
 
         if(normalization_required){
-            start_time = 100*start_time/time_results.total_time;
-            end_time = 100*end_time/time_results.total_time;
+            start_time = 200*start_time/time_results.total_time;
+            end_time = 200*end_time/time_results.total_time;
         }
 
         let row = [
@@ -60,7 +61,7 @@ function drawGanttChart(container, time_results) {
         let new_label_value = parseInt(horizontalLabel.textContent) - horizontal_label_value_helper;
         
         if(normalization_required){
-            new_label_value = Math.round(new_label_value*time_results.total_time/100);
+            new_label_value = Math.round(new_label_value*time_results.total_time/200);
         }
 
         horizontalLabel.textContent = new_label_value.toString();

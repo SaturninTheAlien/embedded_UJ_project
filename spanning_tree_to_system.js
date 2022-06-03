@@ -33,7 +33,7 @@ function createEmbeddedSystemFromSpanningTree(task_graph, spanning_tree){
 
         let chosen_proc_type = task_graph.processors[chosen_index];
         if(chosen_proc_type.hardware_core){
-            let e = embedded_system.find(a => a.proc_type_id == chosen_index);
+            let e = embedded_system.find(a => a.processor.type_id == chosen_index);
             if(e==null){
                 embedded_system.push({
                     "tasks": [task.name, ],
