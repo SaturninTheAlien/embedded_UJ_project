@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Genetic app</title>
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
     <style>
 
 .orig-1 {
@@ -21,6 +23,22 @@
 
 .orig-4{
     background-color: rgb(226, 197, 250);
+}
+
+.label1{
+    font-weight: bold;
+    margin-bottom: 0px;
+}
+
+.flex_container{
+    display: flex;
+    flex-direction: row;
+}
+
+@media (max-width: 800px) {
+    .flex_container {
+        flex-direction: column;
+    }
 }
 
 table.t1 {
@@ -92,6 +110,15 @@ table.t1 th, table.t1 td{
     </td>
     <td>
         <input name="number_by_cloning" type="number" min="0" max="30" value="1" required />
+    </td>
+</tr>
+
+<tr>
+    <td>
+        <label>Include the fastest and cheapest individuals:</label>
+    </td>
+    <td>
+        <input name="include_fastest_cheapest" type="checkbox" />
     </td>
 </tr>
 
@@ -189,7 +216,41 @@ CHAN0 59 10 1 1 1 1
         <button type="submit">Start genetic</button>
     </form>
 
-    <div id="genetic_app_root" style="display: none;"> </div>
+    <div id="genetic_app_root" style="display: none;">
+        <div class="flex_container">
+            <div style="flex: 1;" name="genetic"></div>
+            <div style="flex: 1; margin-left: 5px;" name="system_description">
+            </div>
+        </div>
+
+        <table class="t1" style="margin-top: 20px;">
+            <tr>
+                <th>Legend</th>                
+            </tr>
+            
+            <tr>
+                <td class="orig-0">Initial best time/cost</td>
+            </tr>
+
+            <tr>
+                <td class="orig-1">Initial, random</td>
+            </tr>
+
+            <tr>
+                <td class="orig-2">Created by crossing-over</td>
+            </tr>
+            <tr>
+                <td class="orig-3">Created by mutation</td>
+            </tr>
+            <tr>
+                <td class="orig-4">Created by cloning</td>
+            </tr>
+
+        </table>
+
+        <!-- <div name="system_description" style="display: none;"></div> -->
+
+    </div>
 
     <script type="module">
         console.log("Hello world");
@@ -223,6 +284,7 @@ CHAN0 59 10 1 1 1 1
             let score_func = null;
             let selected_function_id = Number.parseInt(fd.get("selected_function_id"));
 
+            let include_fastest_cheapest = fd.get("include_fastest_cheapest") === "on";
 
             switch(selected_function_id){
             case 0:
@@ -243,7 +305,7 @@ CHAN0 59 10 1 1 1 1
             }
 
             let app = new GeneticApp(genetic_app_root, task_graph, score_func,start_n, max_n,
-            number_by_crossing, number_by_mutation, number_by_cloning);
+            number_by_crossing, number_by_mutation, number_by_cloning, include_fastest_cheapest);
 
             app.render();
 

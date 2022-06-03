@@ -3,11 +3,10 @@
 import {calculateCost, calculateTime} from "./cost_and_time.js";
 
 function renderSystemDescription(system_in){
-    let inner_html = "<p>";
+    let inner_html = "";    
     for(let e of system_in){
         inner_html += `${e.processor.name}: ${e.tasks.join(",")} <br/>`;
     }
-    inner_html += "</p>";
     return inner_html;
 }
 

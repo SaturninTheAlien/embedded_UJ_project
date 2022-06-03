@@ -23,7 +23,7 @@ function renderSystemDescriptionFromTree(task_graph, spanning_tree, tree_name="T
         </div>
     
         <div style="flex: 1;">
-            ${renderSystemDescription(system)}
+            <p> ${renderSystemDescription(system)} </p>
         </div>
     </div>
     `

@@ -4,6 +4,8 @@ import { createSpanningTree } from "./spanning_tree.js";
 import { calculateCost, calculateTime } from "./cost_and_time.js";
 import { createEmbeddedSystemFromSpanningTree } from "./spanning_tree_to_system.js";
 import { crossOver, mutation, cloneTree } from "./genetic.js";
+import { renderSystemDescription } from "./render.js";
+import { drawGanttChart } from "./gantt.js";
 
 class Individual{
     constructor(task_graph, tree, origin, calculateScoreFunc){
@@ -49,20 +51,23 @@ class GeneticApp{
     max_n = 15,
     number_by_crossing = 10,
     number_by_mutation = 2,
-    number_by_cloning = 1
+    number_by_cloning = 1,
+    include_fastest_cheapest = false
 
     ){
         this.individuals = [];
 
         this.root_div = root_div;
 
-        this.genetic_div = document.createElement("div");
+        /*this.genetic_div = document.createElement("div");
         this.root_div.appendChild(this.genetic_div);
 
         this.system_description_div = document.createElement("div");
         this.system_description_div.style.display = "none";
-        this.root_div.appendChild(this.system_description_div);
+        this.root_div.appendChild(this.system_description_div);*/
 
+        this.genetic_div = this.root_div.querySelector("div[name='genetic']");
+        this.system_description_div = this.root_div.querySelector("div[name='system_description']");
 
         this.task_graph = task_graph;
         this.calculateScoreFunc = score_func;
@@ -71,6 +76,24 @@ class GeneticApp{
         this.number_by_crossing = number_by_crossing;
         this.number_by_mutation = number_by_mutation;
         this.number_by_cloning = number_by_cloning;
+        
+        if(include_fastest_cheapest){
+            start_n-=2;
+
+            //The fastest solution
+            this.individuals.push(new Individual(
+                task_graph,
+                createSpanningTree(task_graph, function(task){return 1}),
+                0,
+                score_func));
+
+            //The cheapest solution
+            this.individuals.push(new Individual(
+                task_graph,
+                createSpanningTree(task_graph, function(task){return 4}),
+                0,
+                score_func));
+        }
 
         for(let i=0;i<start_n;++i){
             this.individuals.push(new Individual(
@@ -86,8 +109,21 @@ class GeneticApp{
 
     updateBestIndividual(){
         for(let ind of this.individuals){
+
             if(ind.score < this.best_individual.score){
                 this.best_individual = ind;
+            }
+            else if(ind.score == this.best_individual.score){
+                let cost1 = ind.cost.total_cost;
+                let time1 = ind.time.total_time;
+
+                let cost2 = this.best_individual.cost.total_cost;
+                let time2 = this.best_individual.time.total_time;
+
+                if((cost1 <= cost2 && time1 < time2)||
+                (cost1 < cost2 && time1 <= time2)){
+                    this.best_individual = ind;
+                }
             }
         }
     }
@@ -144,10 +180,10 @@ class GeneticApp{
         <p>Individuals: ${this.individuals.length}/${this.max_n}
         <button type="button" name="next_generation">Next generation</button></p>
 
-        <p>The best individual:<p>
+        <p class="label1">The best individual:</p>
         <table name="best_individual" class="t1">${table_header}</table>
 
-        <p>All individuals:</p>
+        <p class="label1">All individuals:</p>
         <table name="all_individuals" class="t1">${table_header}</table>
         `;
 
@@ -245,8 +281,32 @@ class GeneticApp{
         
     }
 
-    renderIndividualDescription(individual){
-        console.log(individual);
+    renderIndividualDescription(ind){
+        this.system_description_div.innerHTML = `
+        <h3>
+        Selected individual: ${ind.tree.constructionOptionsBracketNotation()}
+        </h3>
+
+        <p><span style="font-weight:bold;"> System: </span><br/>
+        ${renderSystemDescription(ind.system)}
+        </p>
+
+        <p>
+        Cost of programmable processors: ${ind.cost.cost_of_processors} <br/>
+        Cost of execution: ${ind.cost.cost_of_execution} <br/>
+        Cost of channels: ${ind.cost.cost_of_channels} <br/>
+        Total cost: ${ind.cost.total_cost} <br/>
+        Total time: ${ind.time.total_time} <br/>
+
+        Score: ${ind.score} <br/>
+        </p>        
+        `;
+
+        let gantt_div = document.createElement("div");
+        this.system_description_div.appendChild(gantt_div);
+        drawGanttChart(gantt_div, ind.time);
+
+        console.log(ind);
     }
 }
 
