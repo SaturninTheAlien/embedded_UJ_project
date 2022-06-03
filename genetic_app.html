@@ -73,7 +73,7 @@ table.t1 th, table.t1 td{
         <label>Initial number of individuals (min 2):</label>
     </td>
     <td>
-        <input name="start_n" type="number" min="4" max="30" value="2" required />
+        <input name="start_n" type="number" min="2" max="30" value="4" required />
     </td>
 </tr>
 
@@ -217,40 +217,40 @@ CHAN0 59 10 1 1 1 1
     </form>
 
     <div id="genetic_app_root" style="display: none;">
+        <button type="button" id="start_over_button">Start over</button>
+
         <div class="flex_container">
-            <div style="flex: 1;" name="genetic"></div>
+            <div style="flex: 1;">
+                <div name="genetic"></div>
+                <table class="t1" style="margin-top: 20px;">
+                    <tr>
+                        <th>Legend</th>                
+                    </tr>
+                    
+                    <tr>
+                        <td class="orig-0">Initial best time/cost</td>
+                    </tr>
+        
+                    <tr>
+                        <td class="orig-1">Initial, random</td>
+                    </tr>
+        
+                    <tr>
+                        <td class="orig-2">Created by crossing-over</td>
+                    </tr>
+                    <tr>
+                        <td class="orig-3">Created by mutation</td>
+                    </tr>
+                    <tr>
+                        <td class="orig-4">Created by cloning</td>
+                    </tr>
+                </table>
+            </div>
             <div style="flex: 1; margin-left: 5px; margin-top: 5px;">
                 <div name="system_description"></div>
                 <div name="gantt"></div>
             </div>
         </div>
-
-        <table class="t1" style="margin-top: 20px;">
-            <tr>
-                <th>Legend</th>                
-            </tr>
-            
-            <tr>
-                <td class="orig-0">Initial best time/cost</td>
-            </tr>
-
-            <tr>
-                <td class="orig-1">Initial, random</td>
-            </tr>
-
-            <tr>
-                <td class="orig-2">Created by crossing-over</td>
-            </tr>
-            <tr>
-                <td class="orig-3">Created by mutation</td>
-            </tr>
-            <tr>
-                <td class="orig-4">Created by cloning</td>
-            </tr>
-
-        </table>
-
-        <!-- <div name="system_description" style="display: none;"></div> -->
 
     </div>
 
@@ -262,6 +262,20 @@ CHAN0 59 10 1 1 1 1
 
         let tg_form = document.getElementById("tg_form");
         let genetic_app_root = document.getElementById("genetic_app_root");
+        let start_over_button = document.getElementById("start_over_button");
+
+        let app = null;
+
+        start_over_button.onclick = function(){
+            if(confirm("Are you sure to start over?")){
+                tg_form.style.display = "none";
+                genetic_app_root.style.display = null;
+
+                app.clear();
+                app = null;
+            }
+        }
+
 
         tg_form.onsubmit = function(event){
             event.preventDefault();
@@ -306,7 +320,7 @@ CHAN0 59 10 1 1 1 1
                 break;
             }
 
-            let app = new GeneticApp(genetic_app_root, task_graph, score_func,start_n, max_n,
+            app = new GeneticApp(genetic_app_root, task_graph, score_func,start_n, max_n,
             number_by_crossing, number_by_mutation, number_by_cloning, include_fastest_cheapest);
 
             app.render();

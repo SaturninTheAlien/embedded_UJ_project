@@ -241,8 +241,12 @@ function createEmbeddedSystemFromSpanningTree(task_graph, spanning_tree){
         }
     }
 
-    f1(spanning_tree);    
-    return embedded_system;
+    f1(spanning_tree);
+
+    let p1 = embedded_system.filter(a=>!a.processor.hardware_core);
+    let p2 = embedded_system.filter(a=>a.processor.hardware_core);
+
+    return p1.concat(p2);
 }
 
 export {createEmbeddedSystemFromSpanningTree};

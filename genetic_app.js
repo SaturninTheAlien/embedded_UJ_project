@@ -297,6 +297,19 @@ class GeneticApp{
         `;
 
         drawGanttChart(this.gantt_div, ind.time);
+        
+        /*let h1 = this.root_div.clientHeight - this.system_description_div.clientHeight - 50;
+        let h2 = this.gantt_div.clientHeight;
+        console.log(h2);
+        if(h1 > h2){
+            this.gantt_div.style.height = Number.parseInt(h1).toString() +"px";
+        }*/
+    }
+
+    clear(){
+        this.system_description_div.innerText = "";
+        this.gantt_div.innerText = "";
+        this.genetic_div.innerText = "";
     }
 }
 

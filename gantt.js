@@ -35,8 +35,8 @@ function drawGanttChart(container, time_results) {
         let end_time = a.end_time;
 
         if(normalization_required){
-            start_time = 200*start_time/time_results.total_time;
-            end_time = 200*end_time/time_results.total_time;
+            start_time = 100*start_time/time_results.total_time;
+            end_time = 100*end_time/time_results.total_time;
         }
 
         let row = [
@@ -56,16 +56,24 @@ function drawGanttChart(container, time_results) {
     };
     chart.draw(dataTable, options);
 
-    for (let horizontalLabel of container.querySelectorAll('svg > g:nth-child(3) > text')) {
+    /**
+     * Zmiana labelek w ten sposób nie działa, bo nie zawsze na 3. miejscu,
+     * czasami działa, ale nie zawsze, a czasami crashuje kod.
+     * trzeba to zrobić jakoś inaczej przez chart.draw
+     */
+
+    /*let tmp = container.querySelectorAll('svg > g:nth-child(3) > text');
+    console.log(tmp);
+    for (let horizontalLabel of tmp) {
         
         let new_label_value = parseInt(horizontalLabel.textContent) - horizontal_label_value_helper;
         
         if(normalization_required){
-            new_label_value = Math.round(new_label_value*time_results.total_time/200);
+            new_label_value = Math.round(new_label_value*time_results.total_time/100);
         }
 
         horizontalLabel.textContent = new_label_value.toString();
-    }
+    }*/
 }
 
 export {drawGanttChart};
