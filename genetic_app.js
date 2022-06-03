@@ -47,6 +47,7 @@ class GeneticApp{
     constructor(root_div,
     task_graph,
     score_func,
+    score_func_name,
     start_n = 2,
     max_n = 15,
     number_by_crossing = 10,
@@ -65,11 +66,14 @@ class GeneticApp{
 
         this.task_graph = task_graph;
         this.calculateScoreFunc = score_func;
+        this.score_func_name = score_func_name;
 
         this.max_n = max_n;        
         this.number_by_crossing = number_by_crossing;
         this.number_by_mutation = number_by_mutation;
         this.number_by_cloning = number_by_cloning;
+
+        this.generation_counter = 0;
         
         if(include_fastest_cheapest){
             start_n-=2;
@@ -171,7 +175,9 @@ class GeneticApp{
         `;
 
         this.genetic_div.innerHTML = `
-        <p>Individuals: ${this.individuals.length}/${this.max_n}
+        <h3>Function to minimize: score = ${this.score_func_name}</h3>
+        <p>Generation: ${this.generation_counter}<br/>
+        Individuals: ${this.individuals.length}/${this.max_n}
         <button type="button" name="next_generation">Next generation</button></p>
 
         <p class="label1">The best individual:</p>
@@ -180,6 +186,8 @@ class GeneticApp{
         <p class="label1">All individuals:</p>
         <table name="all_individuals" class="t1">${table_header}</table>
         `;
+
+        ++this.generation_counter;
 
         let next_generation_btn = this.genetic_div.querySelector("button[name='next_generation']");
         

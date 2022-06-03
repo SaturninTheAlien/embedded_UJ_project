@@ -131,7 +131,15 @@ table.t1 th, table.t1 td{
             <option value="0">time * cost</option>
             <option value="1">time</option>
             <option value="2">cost</option>
+            <option value="3">cost + k*(time - tmax)</option>
         </select>
+        <div style="display: none;" id="function_3_parameters">
+            <br/>
+            <label>tmax:</label>
+            <input name="tmax" type="number" min="0" step="any" placeholder="tmax"/>
+            <label>k:</label>
+            <input name="k" type="number" min="0" step="any" placeholder="k"/>
+        </div>
     </td>
 </tr>
 </table>
@@ -263,6 +271,29 @@ CHAN0 59 10 1 1 1 1
         let tg_form = document.getElementById("tg_form");
         let genetic_app_root = document.getElementById("genetic_app_root");
         let start_over_button = document.getElementById("start_over_button");
+        
+        
+        
+        let function_select = document.getElementById("tg_form_selected_function_id");
+        let function_3_parameters = document.getElementById("function_3_parameters");
+        
+        
+        function_select.onchange = function(){
+            let v = Number.parseInt(function_select.value);
+            if(v===3 && function_3_parameters.style.display=="none"){
+                function_3_parameters.style.display = null;
+                for(let input of function_3_parameters.querySelectorAll("input")){
+                    input.setAttribute('required', '');
+                }
+            }
+            else if(function_3_parameters.style.display !== "none"){
+                function_3_parameters.style.display = "none";
+                for(let input of function_3_parameters.querySelectorAll("input")){
+                    input.removeAttribute('required', '');
+                }
+            }
+        }
+
 
         let app = null;
 
@@ -302,6 +333,8 @@ CHAN0 59 10 1 1 1 1
 
             let include_fastest_cheapest = fd.get("include_fastest_cheapest") === "on";
 
+            let score_func_name = function_select.options[function_select.selectedIndex].text;
+
             switch(selected_function_id){
             case 0:
                 score_func = function(time, cost){
@@ -318,9 +351,17 @@ CHAN0 59 10 1 1 1 1
                     return cost;
                 }
                 break;
+            case 3:
+                let k = Number.parseFloat(fd.get("k"));
+                let tmax = Number.parseFloat(fd.get("tmax"));
+                score_func = function(time, cost){
+                    return cost + k*(time - tmax);
+                }
+                score_func_name = `cost + ${k}*(time - ${tmax})`;
+                break;
             }
 
-            app = new GeneticApp(genetic_app_root, task_graph, score_func,start_n, max_n,
+            app = new GeneticApp(genetic_app_root, task_graph, score_func, score_func_name, start_n, max_n,
             number_by_crossing, number_by_mutation, number_by_cloning, include_fastest_cheapest);
 
             app.render();
