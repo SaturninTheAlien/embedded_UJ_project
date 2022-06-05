@@ -62,7 +62,7 @@ class GeneticApp{
 
         this.genetic_div = this.root_div.querySelector("div[name='genetic']");
         this.system_description_div = this.root_div.querySelector("div[name='system_description']");
-        this.gantt_div = this.root_div.querySelector("div[name='gantt']");
+        this.gantt_div = this.root_div.querySelector("div[id='gantt']");
 
         this.task_graph = task_graph;
         this.calculateScoreFunc = score_func;
@@ -164,7 +164,7 @@ class GeneticApp{
 
     render(){
         const table_header = `
-        <tr>
+        <tr class="table-dark">
             <th>Nr</th>
             <th>Tree</th>
             <th>Cost</th>
@@ -177,14 +177,35 @@ class GeneticApp{
         this.genetic_div.innerHTML = `
         <h3>Function to minimize: score = ${this.score_func_name}</h3>
         <p>Generation: ${this.generation_counter}<br/>
-        Individuals: ${this.individuals.length}/${this.max_n}
-        <button type="button" name="next_generation">Next generation</button></p>
+        Individuals: ${this.individuals.length}/${this.max_n}<br /><br />
+        <button type="button" name="next_generation" class="btn btn-primary">Next generation</button></p><hr />
 
+        <table class="table table-hover mb-3">
+            <tr class="table-dark">
+                <th>Legend</th>                
+            </tr>
+            <tr>
+                <td>Initial best time/cost</td>
+            </tr>
+            <tr class="table-primary">
+                <td>Initial, random</td>
+            </tr>
+            <tr class="table-warning">
+                <td>Created by crossing-over</td>
+            </tr>
+            <tr class="table-info">
+                <td>Created by mutation</td>
+            </tr>
+            <tr class="table-success">
+                <td>Created by cloning</td>
+            </tr>
+        </table>
+        
         <p class="label1">The best individual:</p>
-        <table name="best_individual" class="t1">${table_header}</table>
+        <table name="best_individual" class="table table-hover mb-3">${table_header}</table>
 
         <p class="label1">All individuals:</p>
-        <table name="all_individuals" class="t1">${table_header}</table>
+        <table name="all_individuals" class="table table-hover mb-3">${table_header}</table>
         `;
 
         ++this.generation_counter;
@@ -210,7 +231,21 @@ class GeneticApp{
 
     renderIndividual(table, ind, counter){
         let row = table.insertRow(-1);
-        row.classList.add(`orig-${ind.origin}`);
+        switch (ind.origin)
+        {
+            case 1:
+                row.classList.add(`table-primary`);
+                break;
+            case 2:
+                row.classList.add(`table-warning`);
+                break;
+            case 3:
+                row.classList.add(`table-info`);
+                break;
+            case 4:
+                row.classList.add(`table-success`);
+                break;
+        }
         
         let cell = row.insertCell(0);
         cell.innerText = counter.toString();
@@ -232,6 +267,7 @@ class GeneticApp{
         let btn = document.createElement("button");
         btn.type = "button";
         btn.innerText = "Show system";
+        btn.classList.add("btn", "btn-dark");
 
         let _this = this;
         btn.onclick = function(){
@@ -305,13 +341,6 @@ class GeneticApp{
         `;
 
         drawGanttChart(this.gantt_div, ind.time);
-        
-        /*let h1 = this.root_div.clientHeight - this.system_description_div.clientHeight - 50;
-        let h2 = this.gantt_div.clientHeight;
-        console.log(h2);
-        if(h1 > h2){
-            this.gantt_div.style.height = Number.parseInt(h1).toString() +"px";
-        }*/
     }
 
     clear(){
@@ -320,6 +349,5 @@ class GeneticApp{
         this.genetic_div.innerText = "";
     }
 }
-
 
 export {GeneticApp};
