@@ -1,0 +1,16 @@
+#tg_form, #genetic_app_root {
+    margin: 16px;
+}
+
+#tg_form .input {
+    width: 35%;
+    cursor: pointer;
+}
+
+#app-nav-header {
+    font-size: 28px;
+}
+
+#tg_form_tg_source_ta {
+    height: 500px;
+}
