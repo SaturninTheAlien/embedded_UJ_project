@@ -24,6 +24,9 @@ function createEmbeddedSystemFromSpanningTree(task_graph, spanning_tree){
         let chosen_score = calculate_score(0);
 
         for(let i=1;i<task_graph.processors.length;++i){
+            if(task.hasOwnProperty("unexpected")&& task.unexpected &&
+            task_graph.processors[i].hardware_core)continue;
+            
             let new_score = calculate_score(i);
             if(new_score < chosen_score){
                 chosen_score = new_score;

@@ -350,4 +350,4 @@ class GeneticApp{
     }
 }
 
-export {GeneticApp};
+export {GeneticApp, Individual};
