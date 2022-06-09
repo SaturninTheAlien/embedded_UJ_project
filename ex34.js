@@ -1,5 +1,7 @@
 'use strict';
 
+import {readTaskGraph} from "./task_graph.js";
+
 const graph_20_src = `
 @tasks 20
 T0 5 1(0) 2(0) 3(0) 4(0) 5(0) 
